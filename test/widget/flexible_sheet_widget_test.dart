@@ -23,6 +23,8 @@ Widget buildSheet({
   ValueChanged<bool>? onStateChanged,
   ValueChanged<double>? onHeightChanged,
   SheetPhysics? physics,
+  double? width,
+  Alignment? alignment,
 }) {
   return buildTestApp(
     FlexibleSheet(
@@ -36,6 +38,8 @@ Widget buildSheet({
       onStateChanged: onStateChanged,
       onHeightChanged: onHeightChanged,
       physics: physics,
+      width: width,
+      alignment: alignment,
       childBuilder: (height) => Container(
         key: const Key('sheet-content'),
         color: Colors.blue,
@@ -423,6 +427,169 @@ void main() {
 
       expect(find.text('Height: 300'), findsOneWidget);
       controller.dispose();
+    });
+  });
+
+  group('FlexibleSheet — width', () {
+    testWidgets('sheet takes full width when width is null', (tester) async {
+      await tester.pumpWidget(buildSheet());
+      await tester.pumpAndSettle();
+
+      // No Align widget should be present within FlexibleSheet
+      expect(
+        find.descendant(
+          of: find.byType(FlexibleSheet),
+          matching: find.byType(Align),
+        ),
+        findsNothing,
+      );
+    });
+
+    testWidgets('sheet is constrained to given width', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Align(
+            alignment: Alignment.topLeft,
+            child: SizedBox(
+              width: 400,
+              height: 400,
+              child: FlexibleSheet(
+                maxHeight: 300,
+                minHeight: 50,
+                width: 200,
+                childBuilder: (h) => Container(
+                  key: const Key('content'),
+                  color: Colors.blue,
+                ),
+                handleBuilder: (h) => const SizedBox(height: 48),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final content = find.byKey(const Key('content'));
+      final size = tester.getSize(content);
+      expect(size.width, 200);
+    });
+
+    testWidgets('sheet with width is centered by default', (tester) async {
+      await tester.pumpWidget(buildSheet(width: 200));
+      await tester.pumpAndSettle();
+
+      final align = tester.widget<Align>(
+        find.descendant(
+          of: find.byType(FlexibleSheet),
+          matching: find.byType(Align),
+        ),
+      );
+      expect(align.alignment, Alignment.center);
+    });
+  });
+
+  group('FlexibleSheet — alignment', () {
+    testWidgets('sheet aligns to the left', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Align(
+            alignment: Alignment.topLeft,
+            child: SizedBox(
+              width: 400,
+              height: 400,
+              child: FlexibleSheet(
+                maxHeight: 300,
+                minHeight: 50,
+                width: 200,
+                alignment: Alignment.centerLeft,
+                childBuilder: (h) => Container(
+                  key: const Key('content'),
+                  color: Colors.blue,
+                ),
+                handleBuilder: (h) => const SizedBox(height: 48),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final content = find.byKey(const Key('content'));
+      final topLeft = tester.getTopLeft(content);
+      // Should be at x = 0 (left edge of the 400px container)
+      expect(topLeft.dx, 0);
+    });
+
+    testWidgets('sheet aligns to the right', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Align(
+            alignment: Alignment.topLeft,
+            child: SizedBox(
+              width: 400,
+              height: 400,
+              child: FlexibleSheet(
+                maxHeight: 300,
+                minHeight: 50,
+                width: 200,
+                alignment: Alignment.centerRight,
+                childBuilder: (h) => Container(
+                  key: const Key('content'),
+                  color: Colors.blue,
+                ),
+                handleBuilder: (h) => const SizedBox(height: 48),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final content = find.byKey(const Key('content'));
+      final topLeft = tester.getTopLeft(content);
+      // Sheet is 200px wide, aligned right in 400px container → starts at 200
+      expect(topLeft.dx, 200);
+    });
+
+    testWidgets('alignment without width wraps in Align', (tester) async {
+      await tester.pumpWidget(buildSheet(
+        alignment: Alignment.centerLeft,
+      ));
+      await tester.pumpAndSettle();
+
+      final align = tester.widget<Align>(
+        find.descendant(
+          of: find.byType(FlexibleSheet),
+          matching: find.byType(Align),
+        ),
+      );
+      expect(align.alignment, Alignment.centerLeft);
+    });
+  });
+
+  group('FlexibleSheet — width assertions', () {
+    test('asserts width > 0', () {
+      expect(
+        () => FlexibleSheet(
+          maxHeight: 300,
+          minHeight: 50,
+          width: 0,
+          childBuilder: (_) => const SizedBox(),
+        ),
+        throwsAssertionError,
+      );
+    });
+
+    test('asserts negative width fails', () {
+      expect(
+        () => FlexibleSheet(
+          maxHeight: 300,
+          minHeight: 50,
+          width: -10,
+          childBuilder: (_) => const SizedBox(),
+        ),
+        throwsAssertionError,
+      );
     });
   });
 }

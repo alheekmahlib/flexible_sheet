@@ -42,6 +42,8 @@ class FlexibleSheet extends StatefulWidget {
     this.snapBehavior = SheetSnapBehavior.snapToEdge,
     this.physics,
     this.initialHeight,
+    this.width,
+    this.alignment,
     this.isDraggable = true,
     this.onStateChanged,
     this.onHeightChanged,
@@ -56,6 +58,10 @@ class FlexibleSheet extends StatefulWidget {
               (initialHeight >= minHeight && initialHeight <= maxHeight),
           'initialHeight ($initialHeight) must be between '
           'minHeight ($minHeight) and maxHeight ($maxHeight)',
+        ),
+        assert(
+          width == null || width > 0,
+          'width ($width) must be positive',
         );
 
   /// The direction the sheet slides.
@@ -110,6 +116,22 @@ class FlexibleSheet extends StatefulWidget {
 
   /// Called whenever the sheet height changes (during drag or animation).
   final ValueChanged<double>? onHeightChanged;
+
+  /// The width of the sheet.
+  ///
+  /// If null, the sheet takes the full available width from its parent.
+  /// If provided, the sheet will be constrained to this width and
+  /// positioned according to [alignment].
+  final double? width;
+
+  /// The horizontal alignment of the sheet when [width] is set.
+  ///
+  /// Use [Alignment.center], [Alignment.centerLeft], [Alignment.centerRight],
+  /// etc. Only the horizontal component is used.
+  ///
+  /// Defaults to [Alignment.center] when [width] is provided.
+  /// Has no effect when [width] is null (the sheet fills the parent width).
+  final Alignment? alignment;
 
   /// The clip behavior for the sheet content area. Defaults to [Clip.hardEdge].
   final Clip clipBehavior;
@@ -350,10 +372,28 @@ class _FlexibleSheetState extends State<FlexibleSheet>
         ? [content, handle]
         : [handle, content];
 
-    return Column(
+    Widget sheet = Column(
       mainAxisSize: MainAxisSize.min,
       children: children,
     );
+
+    // Apply width constraint
+    if (widget.width != null) {
+      sheet = SizedBox(
+        width: widget.width,
+        child: sheet,
+      );
+    }
+
+    // Apply alignment
+    if (widget.width != null || widget.alignment != null) {
+      sheet = Align(
+        alignment: widget.alignment ?? Alignment.center,
+        child: sheet,
+      );
+    }
+
+    return sheet;
   }
 
   Widget _buildHandle() {
