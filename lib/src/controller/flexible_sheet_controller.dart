@@ -47,6 +47,7 @@ class FlexibleSheetController extends ChangeNotifier {
 
   bool _isOpen;
   double _currentHeight = 0;
+  bool _isHandleVisible = true;
   SheetAction? _lastAction;
   double? _targetHeight;
 
@@ -63,6 +64,9 @@ class FlexibleSheetController extends ChangeNotifier {
 
   /// The target height for [animateTo], used internally by the sheet widget.
   double? get targetHeight => _targetHeight;
+
+  /// Whether the drag handle is currently visible.
+  bool get isHandleVisible => _isHandleVisible;
 
   /// Opens the sheet (animates to max height).
   void open() {
@@ -110,5 +114,23 @@ class FlexibleSheetController extends ChangeNotifier {
   @internal
   void updateOpenState(bool isOpen) {
     _isOpen = isOpen;
+  }
+
+  /// Shows the drag handle.
+  ///
+  /// If the handle is already visible, this is a no-op.
+  void showHandle() {
+    if (_isHandleVisible) return;
+    _isHandleVisible = true;
+    notifyListeners();
+  }
+
+  /// Hides the drag handle.
+  ///
+  /// If the handle is already hidden, this is a no-op.
+  void hideHandle() {
+    if (!_isHandleVisible) return;
+    _isHandleVisible = false;
+    notifyListeners();
   }
 }

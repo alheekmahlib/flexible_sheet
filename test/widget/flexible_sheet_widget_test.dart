@@ -592,4 +592,43 @@ void main() {
       );
     });
   });
+
+  group('FlexibleSheet — handle visibility', () {
+    testWidgets('handle is visible by default', (tester) async {
+      final controller = FlexibleSheetController();
+      await tester.pumpWidget(buildSheet(controller: controller));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('sheet-handle')), findsOneWidget);
+      controller.dispose();
+    });
+
+    testWidgets('hideHandle() removes the handle', (tester) async {
+      final controller = FlexibleSheetController();
+      await tester.pumpWidget(buildSheet(controller: controller));
+      await tester.pumpAndSettle();
+
+      controller.hideHandle();
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('sheet-handle')), findsNothing);
+      controller.dispose();
+    });
+
+    testWidgets('showHandle() restores the handle after hiding',
+        (tester) async {
+      final controller = FlexibleSheetController();
+      await tester.pumpWidget(buildSheet(controller: controller));
+      await tester.pumpAndSettle();
+
+      controller.hideHandle();
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('sheet-handle')), findsNothing);
+
+      controller.showHandle();
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('sheet-handle')), findsOneWidget);
+      controller.dispose();
+    });
+  });
 }

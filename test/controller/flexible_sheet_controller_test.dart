@@ -88,5 +88,49 @@ void main() {
       expect(controller.targetHeight, 250);
       expect(notified, true);
     });
+
+    test('isHandleVisible defaults to true', () {
+      expect(controller.isHandleVisible, true);
+    });
+
+    test('hideHandle() sets isHandleVisible to false and notifies', () {
+      var notified = false;
+      controller.addListener(() => notified = true);
+
+      controller.hideHandle();
+
+      expect(controller.isHandleVisible, false);
+      expect(notified, true);
+    });
+
+    test('hideHandle() does not notify if already hidden', () {
+      controller.hideHandle();
+
+      var notified = false;
+      controller.addListener(() => notified = true);
+
+      controller.hideHandle();
+      expect(notified, false);
+    });
+
+    test('showHandle() sets isHandleVisible to true and notifies', () {
+      controller.hideHandle();
+
+      var notified = false;
+      controller.addListener(() => notified = true);
+
+      controller.showHandle();
+
+      expect(controller.isHandleVisible, true);
+      expect(notified, true);
+    });
+
+    test('showHandle() does not notify if already visible', () {
+      var notified = false;
+      controller.addListener(() => notified = true);
+
+      controller.showHandle();
+      expect(notified, false);
+    });
   });
 }

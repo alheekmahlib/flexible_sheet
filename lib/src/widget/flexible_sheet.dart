@@ -218,6 +218,9 @@ class _FlexibleSheetState extends State<FlexibleSheet>
   // ---------------------------------------------------------------------------
 
   void _onControllerChanged() {
+    // Rebuild for handle visibility changes
+    setState(() {});
+
     switch (_controller.lastAction) {
       case SheetAction.open:
         _animateToHeight(widget.maxHeight);
@@ -397,6 +400,8 @@ class _FlexibleSheetState extends State<FlexibleSheet>
   }
 
   Widget _buildHandle() {
+    if (!_controller.isHandleVisible) return const SizedBox.shrink();
+
     final handleChild =
         widget.handleBuilder?.call(_currentHeight) ?? const SizedBox.shrink();
 
