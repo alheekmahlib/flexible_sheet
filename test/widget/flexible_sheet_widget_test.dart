@@ -630,5 +630,56 @@ void main() {
       expect(find.byKey(const Key('sheet-handle')), findsOneWidget);
       controller.dispose();
     });
+
+    testWidgets(
+        'showHandle() works after open() then hideHandle()',
+        (tester) async {
+      final controller = FlexibleSheetController();
+      await tester.pumpWidget(buildSheet(controller: controller));
+      await tester.pumpAndSettle();
+
+      // Open the sheet first (sets lastAction to open)
+      controller.open();
+      await tester.pumpAndSettle();
+
+      // Hide the handle
+      controller.hideHandle();
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('sheet-handle')), findsNothing);
+
+      // Show the handle — this should work regardless of previous actions
+      controller.showHandle();
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('sheet-handle')), findsOneWidget);
+      controller.dispose();
+    });
+
+    testWidgets(
+        'hideHandle/showHandle does not replay previous action',
+        (tester) async {
+      final controller = FlexibleSheetController();
+      final states = <bool>[];
+      await tester.pumpWidget(buildSheet(
+        controller: controller,
+        onStateChanged: (s) => states.add(s),
+      ));
+      await tester.pumpAndSettle();
+
+      controller.open();
+      await tester.pumpAndSettle();
+      states.clear(); // Clear the open notification
+
+      // hideHandle should NOT fire onStateChanged again
+      controller.hideHandle();
+      await tester.pumpAndSettle();
+      expect(states, isEmpty);
+
+      // showHandle should NOT fire onStateChanged again
+      controller.showHandle();
+      await tester.pumpAndSettle();
+      expect(states, isEmpty);
+
+      controller.dispose();
+    });
   });
 }

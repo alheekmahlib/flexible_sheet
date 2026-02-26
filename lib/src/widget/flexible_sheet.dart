@@ -221,7 +221,8 @@ class _FlexibleSheetState extends State<FlexibleSheet>
     // Rebuild for handle visibility changes
     setState(() {});
 
-    switch (_controller.lastAction) {
+    final action = _controller.lastAction;
+    switch (action) {
       case SheetAction.open:
         _animateToHeight(widget.maxHeight);
         widget.onStateChanged?.call(true);

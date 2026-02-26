@@ -122,6 +122,7 @@ class FlexibleSheetController extends ChangeNotifier {
   void showHandle() {
     if (_isHandleVisible) return;
     _isHandleVisible = true;
+    _lastAction = null;
     notifyListeners();
   }
 
@@ -131,6 +132,7 @@ class FlexibleSheetController extends ChangeNotifier {
   void hideHandle() {
     if (!_isHandleVisible) return;
     _isHandleVisible = false;
+    _lastAction = null;
     notifyListeners();
   }
 }
