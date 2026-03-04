@@ -131,7 +131,7 @@ class FlexibleSheet extends StatefulWidget {
   ///
   /// Defaults to [Alignment.center] when [width] is provided.
   /// Has no effect when [width] is null (the sheet fills the parent width).
-  final Alignment? alignment;
+  final AlignmentGeometry? alignment;
 
   /// The clip behavior for the sheet content area. Defaults to [Clip.hardEdge].
   final Clip clipBehavior;
