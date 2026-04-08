@@ -80,6 +80,18 @@ Add the package to your project:
 ```
 flutter pub add flexible_sheet
 ```
+Or
+
+```yaml
+dependencies:
+  floatica: ^1.0.0
+```
+
+Then run:
+
+```bash
+flutter pub get
+```
 
 Import it:
 

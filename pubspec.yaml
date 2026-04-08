@@ -1,7 +1,8 @@
 name: flexible_sheet
 description: "A flexible, persistent sheet widget for Flutter — supports top-to-bottom and bottom-to-top directions with configurable snap behavior, spring physics, and programmatic control."
 version: 1.0.0+1
-repository: https://github.com/tempo-riz/persistent_top_sheet
+homepage: https://github.com/alheekmahlib/flexible_sheet
+repository: https://github.com/alheekmahlib/flexible_sheet
 
 environment:
   sdk: ^3.0.0
