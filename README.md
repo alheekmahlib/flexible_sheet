@@ -84,7 +84,7 @@ Or
 
 ```yaml
 dependencies:
-  floatica: ^1.0.0
+  flexible_sheet: ^1.0.0+2
 ```
 
 Then run:
