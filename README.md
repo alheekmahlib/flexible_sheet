@@ -68,7 +68,7 @@ A flexible, persistent sheet widget for Flutter that supports `top-to-bottom` an
 ### Demo
 
 <p align="center">
-<img src="assets/demo.gif" width="340"/>
+<img src="https://raw.githubusercontent.com/alheekmahlib/data/refs/heads/main/packages/flexible_sheet/demo.gif" width="340"/>
 </p>
 
 ---
